@@ -1,0 +1,52 @@
+{
+  "name": "flipper-zero",
+  "displayName": "Flipper Zero",
+  "description": "A vscode extension for the development of flipper zero apps.",
+  "version": "0.1.0",
+  "author": "paulober",
+  "publisher": "paulober",
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/paulober/vscode-flipper-zero/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/paulober/vscode-flipper-zero/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulober/vscode-flipper-zero"
+  },
+  "engines": {
+    "vscode": "^1.87.0",
+    "node": ">=18.17.1"
+  },
+  "main": "./dist/extension.cjs",
+  "markdown": "github",
+  "minimumNodeVersion": 18,
+  "scripts": {
+    "postinstall": "yarn dlx @yarnpkg/sdks vscode",
+    "vscode:prepublish": "yarn run package",
+    "compile": "rollup -c",
+    "watch": "rollup -cw",
+    "package": "rollup -c --environment BUILD:production --sourcemap hidden",
+    "lint": "eslint src --ext mts",
+    "test": "yarn run lint"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "18.17.x",
+    "@types/vscode": "^1.87.0",
+    "@types/which": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "rollup": "^4.10.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "which": "^4.0.0"
+  },
+  "packageManager": "yarn@4.1.1"
+}
