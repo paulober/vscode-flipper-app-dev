@@ -21,6 +21,39 @@
   "main": "./dist/extension.cjs",
   "markdown": "github",
   "minimumNodeVersion": 18,
+  "contributes": {
+    "commands": [
+      {
+        "command": "flipper-zero.newApp",
+        "title": "New App",
+        "category": "Flipper Zero"
+      },
+      {
+        "command": "flipper-zero.clean",
+        "title": "Delete all installed SDKs (also removes all flipper zero projects)",
+        "category": "Flipper Zero"
+      }
+    ],
+    "languages": [
+      {
+        "id": "fam",
+        "aliases": [
+          "FAM",
+          "fam"
+        ],
+        "extensions": [
+          ".fam"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "fam",
+        "scopeName": "source.fam",
+        "path": "./syntaxes/FlipperApplicationManifest.tmLanguage.json"
+      }
+    ]
+  },
   "scripts": {
     "postinstall": "yarn dlx @yarnpkg/sdks vscode",
     "vscode:prepublish": "yarn run package",
@@ -37,15 +70,16 @@
     "@types/node": "18.17.x",
     "@types/vscode": "^1.87.0",
     "@types/which": "^3.0.3",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "rollup": "^4.12.1",
+    "rollup": "^4.13.0",
     "tslib": "^2.6.2",
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "rimraf": "^5.0.5",
     "which": "^4.0.0"
   },
   "packageManager": "yarn@4.1.1"

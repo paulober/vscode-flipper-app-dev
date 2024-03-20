@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "scopeName": "source.fam",
+  "patterns": [{"include": "#app"}],
+  "repository": {
+    "app": {
+      "begin": "\\b(App)\\s*\\(",
+      "end": "\\)",
+      "captures": {
+        "1": { "name": "entity.name.function" }
+      },
+      "patterns": [
+        { "include": "#string" },
+        { "include": "#array" },
+        { "include": "#parameters" }
+      ]
+    },
+    "string": {
+      "match": "\"(.*?)\"",
+      "name": "string.quoted.double"
+    },
+    "array": {
+      "begin": "\\brequires=\\[",
+      "end": "\\]",
+      "name": "variable.other.readwrite",
+      "patterns": [
+        { "include": "#string" }
+      ]
+    },
+    "parameters": {
+      "begin": "\\b(?:appid|entry_point|flags|cdefines|requires|conflicts|provides|stack_size|icon|order|sdk_headers|targets|resources|sources|fap_version|fap_icon|fap_libs|fap_category|fap_description|fap_author|fap_weburl|fap_icon_assets|fap_extbuild|fal_embedded)\\s*=\\s*",
+      "end": "(?=[,\\)])\\b",
+      "name": "variable.parameter.name",
+      "patterns": [
+        {
+          "include": "#enum"
+        },
+        {
+          "include": "#string"
+        }
+      ]
+    },
+    "enum": {
+      "begin": "\\b(?:FlipperAppType)\\.",
+      "end": "\\b(SERVICE|SYSTEM|APP|PLUGIN|DEBUG|ARCHIVE|SETTINGS|STARTUP|EXTERNAL|METAPACKAGE)\\b",
+      "captures": {
+        "0": {
+          "name": "variable.enumType"
+        },
+        "1": {
+          "name": "variable.enumValue"
+        }
+      }
+    }
+  }
+}
