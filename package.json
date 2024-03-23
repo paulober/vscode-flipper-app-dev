@@ -32,6 +32,11 @@
         "command": "flipper-zero.clean",
         "title": "Delete all installed SDKs (also removes all flipper zero projects)",
         "category": "Flipper Zero"
+      },
+      {
+        "command": "flipper-zero.famEdit.new",
+        "title": "New Flipper Application Manifest",
+        "category": "Flipper Zero"
       }
     ],
     "languages": [
@@ -52,6 +57,17 @@
         "scopeName": "source.fam",
         "path": "./syntaxes/FlipperApplicationManifest.tmLanguage.json"
       }
+    ],
+    "customEditors": [
+      {
+        "viewType": "flipper-zero.famEdit",
+        "displayName": "Flipper Application Manifest",
+        "selector": [
+          {
+            "filenamePattern": "application.fam"
+          }
+        ]
+      }
     ]
   },
   "scripts": {
@@ -70,13 +86,13 @@
     "@types/node": "18.17.x",
     "@types/vscode": "^1.87.0",
     "@types/which": "^3.0.3",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "rollup": "^4.13.0",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "rimraf": "^5.0.5",

@@ -104,3 +104,15 @@
   align-self: flex-start;
   /* Align button to the top right corner */
 }
+
+.remove-button {
+  margin-bottom: 0 !important;
+  padding: 0rem 1rem !important;
+  font-weight: bold;
+}
+
+input,
+select,
+li {
+  color: var(--vscode-input-foreground);
+}
