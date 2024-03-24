@@ -1,7 +1,7 @@
 {
-  "name": "flipper-zero",
-  "displayName": "Flipper Zero",
-  "description": "A vscode extension for the development of flipper zero apps.",
+  "name": "flipper-app-dev",
+  "displayName": "Flipper app development",
+  "description": "A vscode extension for the development of Flipper Zero® apps.",
   "version": "0.1.0",
   "author": "paulober",
   "publisher": "paulober",
@@ -24,19 +24,19 @@
   "contributes": {
     "commands": [
       {
-        "command": "flipper-zero.newApp",
+        "command": "flipper-app-dev.newApp",
         "title": "New App",
-        "category": "Flipper Zero"
+        "category": "Flipper App Development"
       },
       {
-        "command": "flipper-zero.clean",
-        "title": "Delete all installed SDKs (also removes all flipper zero projects)",
-        "category": "Flipper Zero"
+        "command": "flipper-app-dev.clean",
+        "title": "Delete all installed SDKs (also removes all flipper app projects)",
+        "category": "Flipper App Development"
       },
       {
-        "command": "flipper-zero.famEdit.new",
+        "command": "flipper-app-dev.famEdit.new",
         "title": "New Flipper Application Manifest",
-        "category": "Flipper Zero"
+        "category": "Flipper App Development"
       }
     ],
     "languages": [
@@ -60,7 +60,7 @@
     ],
     "customEditors": [
       {
-        "viewType": "flipper-zero.famEdit",
+        "viewType": "flipper-app-dev.famEdit",
         "displayName": "Flipper Application Manifest",
         "selector": [
           {
@@ -68,7 +68,30 @@
           }
         ]
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "flipper-app-dev",
+          "title": "Flipper Application Development",
+          "icon": ""
+        }
+      ]
+    },
+    "views": {
+      "raspberry-pi-pico-project": [
+        {
+          "id": "flipper-app-dev-quick-access",
+          "name": "Quick Access",
+          "type": "tree"
+        },
+        {
+          "id": "flipper-app-dev-sdk-management",
+          "name": "Quick Access",
+          "type": "webview"
+        }
+      ]
+    }
   },
   "scripts": {
     "postinstall": "yarn dlx @yarnpkg/sdks vscode",

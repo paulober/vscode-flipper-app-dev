@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const addRequireModalBtn = document.getElementById('addRequireModal');
   const newRequireInput = document.getElementById('newRequire');
   const closeBtn = document.querySelector('.close');
-  const submitBtn = document.getElementById('submitBtn');
+  //const submitBtn = document.getElementById('submitBtn');
   const requiredAppIDs = document.getElementById('required-app-ids');
   const propertiesForm = document.getElementById("appPropertiesForm");
 
@@ -74,13 +74,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const element = props[key];
         if (element) {
           const input = document.getElementById(key);
-          switch (key) {
-            case 'requires':
-              updateRequiredItems();
-              break;
-            default:
-              input.value = element;
-              break;
+          if (input) {
+            switch (key) {
+              case 'requires':
+                updateRequiredItems();
+                break;
+              default:
+                input.value = element;
+                break;
+            }
           }
         }
       }
@@ -179,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  submitBtn.addEventListener('click', function () {
+  /*submitBtn.addEventListener('click', function () {
     // get values and names of all input elements in the form and send it to vscode api
     const form = document.getElementById('form');
     const formData = new FormData(form);
@@ -191,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
       command: 'submit',
       data: data
     });
-  });
+  });*/
 
   window.addEventListener('message', event => {
     const { type, body, requestId } = event.data;

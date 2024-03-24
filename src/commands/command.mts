@@ -1,6 +1,5 @@
 import { commands, type Disposable } from "vscode";
-
-export const extensionName = "flipper-zero";
+import { EXTENSION_NAME } from "../constants.mjs";
 
 export abstract class Command {
   private readonly commandId: string;
@@ -11,7 +10,7 @@ export abstract class Command {
 
   register(): Disposable {
     return commands.registerCommand(
-      extensionName + "." + this.commandId,
+      EXTENSION_NAME + "." + this.commandId,
       this.execute.bind(this)
     );
   }
@@ -28,7 +27,7 @@ export abstract class CommandWithResult<T> {
 
   register(): Disposable {
     return commands.registerCommand(
-      extensionName + "." + this.commandId,
+      EXTENSION_NAME + "." + this.commandId,
       this.execute.bind(this)
     );
   }
@@ -45,7 +44,7 @@ export abstract class CommandWithArgs {
 
   register(): Disposable {
     return commands.registerCommand(
-      extensionName + "." + this.commandId,
+      EXTENSION_NAME + "." + this.commandId,
       this.execute.bind(this)
     );
   }

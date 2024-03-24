@@ -15,6 +15,7 @@ import type {
 } from "vscode";
 import { WebviewCollection } from "./webviewCollection.mjs";
 import { DisposableBase, disposeAll } from "./dispose.mjs";
+import { EXTENSION_NAME } from "../constants.mjs";
 
 interface FamDocumentEdit {
   readonly property: string;
@@ -554,11 +555,12 @@ export default class FamDocument
 
 export class FamEditorProvider implements CustomEditorProvider<FamDocument> {
   private static newFamFieldId = 1;
-  private static readonly viewType = "flipper-zero.famEdit";
+  public static readonly viewType = `${EXTENSION_NAME}.famEdit`;
+  public static readonly newViewCommand = `${FamEditorProvider.viewType}.new`;
   private readonly webviews = new WebviewCollection();
 
   public static register(context: ExtensionContext): Disposable {
-    commands.registerCommand("flipper-zero.famEdit.new", () => {
+    commands.registerCommand(FamEditorProvider.newViewCommand, () => {
       const workspaceFolders = workspace.workspaceFolders;
       if (!workspaceFolders) {
         void window.showErrorMessage("No workspace folder is open.");
@@ -623,6 +625,63 @@ export class FamEditorProvider implements CustomEditorProvider<FamDocument> {
               }
             } else if (typeof value === "boolean") {
               fileContent += `    ${key}=${value ? "True" : "False"},\n`;
+            } else if (Array.isArray(value) && key === "fap_extbuild") {
+              const val2 = value as FamExtFile[];
+              if (val2.length > 0) {
+                fileContent += `    ${key}=(\n`;
+                val2.forEach(val => {
+                  fileContent += `        ExtFile(\n          path="${val.path}",\n          command="${val.command}"\n        ),\n`;
+                });
+                fileContent += "    ),\n";
+              }
+            } else if (Array.isArray(value) && key === "fap_private_libs") {
+              const val2 = value as FamLib[];
+              if (val2.length > 0) {
+                fileContent += `    ${key}=[\n`;
+                val2.forEach(val => {
+                  fileContent += `        Lib(\n          name="${val.name}"`;
+                  if (
+                    val.fap_include_paths &&
+                    val.fap_include_paths.length > 0
+                  ) {
+                    fileContent += `,\n          fap_include_paths=[\n`;
+                    val.fap_include_paths?.forEach(path => {
+                      fileContent += `              "${path}",\n`;
+                    });
+                    fileContent += "          ]";
+                  }
+                  if (val.sources && val.sources.length > 0) {
+                    fileContent += `,\n          sources=[\n`;
+                    val.sources?.forEach(source => {
+                      fileContent += `              "${source}",\n`;
+                    });
+                    fileContent += "          ]";
+                  }
+                  if (val.cdefines && val.cdefines.length > 0) {
+                    fileContent += `,\n          cdefines=[\n`;
+                    val.cdefines?.forEach(define => {
+                      fileContent += `              "${define}",\n`;
+                    });
+                    fileContent += "          ]";
+                  }
+                  if (val.cflags && val.cflags.length > 0) {
+                    fileContent += `,\n          cflags=[\n`;
+                    val.cflags?.forEach(flag => {
+                      fileContent += `              "${flag}",\n`;
+                    });
+                    fileContent += "          ]";
+                  }
+                  if (val.cincludes && val.cincludes.length > 0) {
+                    fileContent += `,\n          cincludes=[\n`;
+                    val.cincludes?.forEach(include => {
+                      fileContent += `            "${include}",\n`;
+                    });
+                    fileContent += "          ]";
+                  }
+                  fileContent += "\n        ),\n";
+                });
+                fileContent += "    ],\n";
+              }
             } else if (Array.isArray(value)) {
               if (value.length > 0) {
                 fileContent += `    ${key}=[\n`;
@@ -925,17 +984,17 @@ export class FamEditorProvider implements CustomEditorProvider<FamDocument> {
                     <!-- Add more options as needed --
                 </select>-->
     
-                <label for="sdk_headers">SDK Headers:</label>
+                <!--<label for="sdk_headers">SDK Headers:</label>
                 <input type="text" id="sdk_headers" name="sdk_headers">
     
                 <label for="targets">Targets:</label>
-                <input type="text" id="targets" name="targets">
+                <input type="text" id="targets" name="targets">-->
     
                 <label for="resources">Resources:</label>
                 <input type="text" id="resources" name="resources">
     
-                <label for="sources">Sources:</label>
-                <input type="text" id="sources" name="sources">
+                <!--<label for="sources">Sources:</label>
+                <input type="text" id="sources" name="sources">-->
     
                 <label for="fap_version">FAP Version:</label>
                 <input type="text" id="fap_version" name="fap_version">
@@ -943,8 +1002,8 @@ export class FamEditorProvider implements CustomEditorProvider<FamDocument> {
                 <label for="fap_icon">FAP Icon:</label>
                 <input type="text" id="fap_icon" name="fap_icon">
     
-                <label for="fap_libs">FAP Libs:</label>
-                <input type="text" id="fap_libs" name="fap_libs">
+                <!--<label for="fap_libs">FAP Libs:</label>
+                <input type="text" id="fap_libs" name="fap_libs">-->
     
                 <label for="fap_category">FAP Category:</label>
                 <input type="text" id="fap_category" name="fap_category">
@@ -961,15 +1020,15 @@ export class FamEditorProvider implements CustomEditorProvider<FamDocument> {
                 <label for="fap_icon_assets">FAP Icon Assets:</label>
                 <input type="text" id="fap_icon_assets" name="fap_icon_assets">
     
-                <label for="fap_extbuild">FAP External Build:</label>
-                <input type="text" id="fap_extbuild" name="fap_extbuild">
+                <!--<label for="fap_extbuild">FAP External Build:</label>
+                <input type="text" id="fap_extbuild" name="fap_extbuild">-->
     
                 <div class="float-right">
                     <input type="checkbox" id="fal_embedded" name="fal_embedded">
                     <label class="label-inline" for="fal_embedded">FAL Embedded</label>
                 </div>
     
-                <button type="submit" id="submitBtn">Submit</button>
+                <!--<button type="submit" id="submitBtn">Submit</button>-->
             </fieldset>
         </form>
     </div>
