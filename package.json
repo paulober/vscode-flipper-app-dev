@@ -37,6 +37,11 @@
         "command": "flipper-app-dev.famEdit.new",
         "title": "New Flipper Application Manifest",
         "category": "Flipper App Development"
+      },
+      {
+        "command": "flipper-app-dev.installSDK",
+        "title": "Install SDK",
+        "category": "Flipper App Development"
       }
     ],
     "languages": [
@@ -72,14 +77,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "flipper-app-dev",
+          "id": "flipper-app-dev-activity-bar",
           "title": "Flipper Application Development",
-          "icon": ""
+          "icon": "images/logo-black.png"
         }
       ]
     },
     "views": {
-      "raspberry-pi-pico-project": [
+      "flipper-app-dev-activity-bar": [
         {
           "id": "flipper-app-dev-quick-access",
           "name": "Quick Access",
@@ -87,8 +92,17 @@
         },
         {
           "id": "flipper-app-dev-sdk-management",
-          "name": "Quick Access",
-          "type": "webview"
+          "name": "SDK Management",
+          "type": "tree"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "flipper-app-dev.installSDK",
+          "when": "view == flipper-app-dev-sdk-management",
+          "group": "navigation"
         }
       ]
     }
@@ -104,20 +118,24 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/adm-zip": "^0.5.5",
     "@types/node": "18.17.x",
     "@types/vscode": "^1.87.0",
     "@types/which": "^3.0.3",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "rollup": "^4.13.0",
+    "rollup": "^4.13.2",
     "tslib": "^2.6.2",
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "adm-zip": "^0.5.12",
+    "axios": "^1.6.8",
     "rimraf": "^5.0.5",
     "which": "^4.0.0"
   },
