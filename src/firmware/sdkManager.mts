@@ -17,18 +17,15 @@ import {
 } from "fs";
 import { rimraf } from "rimraf";
 import { join as joinPosix } from "path/posix";
-import { ProgressLocation, Uri, commands, window, workspace } from "vscode";
+import { ProgressLocation, Uri, window, workspace } from "vscode";
 import {
   type GHRelease,
   downloadAndExtractRelease,
 } from "../helper/githubAPI.mjs";
 import { getTemplatesRoot } from "../helper/fsHelper.mjs";
-import { EXTENSION_NAME } from "../constants.mjs";
+import { EXTENSION_NAME, SDKS_FOLDER_NAME } from "../constants.mjs";
 import { homedir } from "os";
 import { join } from "path";
-
-const GITHUB_CLONE_FLIPPER_URL =
-  "https://github.com/flipperdevices/flipperzero-firmware.git";
 
 async function fetchData(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -75,7 +72,7 @@ async function folderExists(path: string): Promise<boolean> {
 export default class FirmwareSDKManager {
   public static async createDevWorkspace(): Promise<void> {
     // create ~/.flipperzero
-    await mkdir(process.env.HOME + "/.flipper-sdk", { recursive: true });
+    await mkdir(join(homedir(), SDKS_FOLDER_NAME), { recursive: true });
   }
 
   /**
@@ -96,9 +93,11 @@ export default class FirmwareSDKManager {
       return false;
     }
 
-    const folderPath = `${homedir().replaceAll("\\", "/")}/.flipper-sdk/${
-      sha1 ?? sdk?.tag_name
-    }`;
+    const folderPath = joinPosix(
+      homedir().replaceAll("\\", "/"),
+      SDKS_FOLDER_NAME,
+      sha1 ?? sdk?.tag_name ?? ""
+    );
 
     // check if folder is already present
     if (await folderExists(folderPath)) {
@@ -108,9 +107,9 @@ export default class FirmwareSDKManager {
     const cloneCommand =
       "git -c advice.detachedHead=false clone --recursive " +
       `https://github.com/${owner}/${repoName}.git ` +
-      `--branch ${branch} --single-branch ` +
+      `--branch ${sdk?.tag_name ?? branch} --single-branch "` +
       folderPath +
-      ` && cd ${folderPath} && ${
+      `" && cd "${folderPath}" && ${
         (sha1 ? `git checkout ${sha1} && ` : "") + "cd -"
       }`;
 
@@ -119,8 +118,8 @@ export default class FirmwareSDKManager {
         location: ProgressLocation.Notification,
         title: "Cloning SDK...",
       },
-      async () => {
-        return new Promise<boolean>(resolve => {
+      async () =>
+        new Promise<boolean>(resolve => {
           exec(cloneCommand, error => {
             if (error) {
               // TODO: log
@@ -129,8 +128,7 @@ export default class FirmwareSDKManager {
               resolve(true);
             }
           });
-        });
-      }
+        })
     );
 
     if (!result) {
@@ -161,7 +159,8 @@ export default class FirmwareSDKManager {
       },
       async () => {
         // Define the command to run
-        const fbtCommand = `cd ${folderPath} && ./fbt`;
+        const fbtCommand =
+          `cd "${folderPath}" && ` + "./fbt vscode_dist LANG_SERVER=cpptools";
 
         // Create a Promise to execute the command
         return new Promise<boolean>(resolve => {
@@ -223,15 +222,15 @@ export default class FirmwareSDKManager {
     repoName: string,
     sdk: GHRelease
   ): Promise<boolean> {
-    if (existsSync(`${process.env.HOME}/.flipper-sdk/${sdk.tag_name}`)) {
+    if (existsSync(join(homedir(), SDKS_FOLDER_NAME, sdk.tag_name))) {
       return true;
     }
 
-    mkdirSync(`${process.env.HOME}/.flipper-sdk`, { recursive: true });
+    mkdirSync(join(homedir(), SDKS_FOLDER_NAME), { recursive: true });
     let result = false;
     const sdkPath = joinPosix(
       homedir().replaceAll("\\", "/"),
-      ".flipper-sdk",
+      SDKS_FOLDER_NAME,
       sdk.tag_name
     );
 
@@ -259,14 +258,15 @@ export default class FirmwareSDKManager {
         },
         async () => {
           // Define the command to run
-          const fbtCommand = `cd ${sdkPath} && ./fbt`;
+          const fbtCommand =
+            `cd "${sdkPath}" && ` + "./fbt vscode_dist LANG_SERVER=cpptools";
 
           // Create a Promise to execute the command
           return new Promise(resolve => {
             result = true;
 
             // Execute the command asynchronously
-            exec(fbtCommand, (error, stdout, stderr) => {
+            exec(fbtCommand, error => {
               if (error) {
                 console.error(error);
                 result = false;
@@ -289,17 +289,13 @@ export default class FirmwareSDKManager {
         try {
           // write to file
           writeFileSync(
-            `${homedir().replaceAll("\\", "/")}/.flipper-sdk/${
-              sdk.tag_name
-            }/info.json`,
+            join(homedir(), SDKS_FOLDER_NAME, sdk.tag_name, "info.json"),
             JSON.stringify(info),
             "utf8"
           );
         } catch {
           // delete folder
-          await rimraf(
-            `${homedir().replaceAll("\\", "/")}/.flipper-sdk/${sdk.tag_name}`
-          );
+          await rimraf(join(homedir(), SDKS_FOLDER_NAME, sdk.tag_name));
 
           return false;
         }
@@ -310,7 +306,7 @@ export default class FirmwareSDKManager {
   }
 
   public static getSDKInfo(releaseTag: string): GHRelease | null {
-    const infoPath = `${process.env.HOME}/.flipper-sdk/${releaseTag}/info.json`;
+    const infoPath = join(homedir(), SDKS_FOLDER_NAME, releaseTag, "info.json");
 
     if (!existsSync(infoPath)) {
       return null;
@@ -338,15 +334,15 @@ export default class FirmwareSDKManager {
   }
 
   /**
-   * Deletes the development SDK of the Flipper Zero firmware.
+   * Deletes a SDK.
    * (uses rimraf)
    *
    * @param sha1 The SHA1 of the commit to delete.
    * @returns A promise that resolves when the deletion is complete
    * and rejects if an error occurs.
    */
-  public static async deleteDevSDK(sha1: string): Promise<void> {
-    const folderPath = `${process.env.HOME}/.flipper-sdk/${sha1}`;
+  public static async deleteSDK(sha1OrTag: string): Promise<void> {
+    const folderPath = join(homedir(), SDKS_FOLDER_NAME, sha1OrTag);
 
     const result = await rimraf(folderPath);
     if (result) {
@@ -361,7 +357,7 @@ export default class FirmwareSDKManager {
    * @returns A promise that resolves with an array of SHA1s of the installed SDKs.
    */
   public static async listInstalledSDKs(): Promise<string[]> {
-    const folderPath = `${process.env.HOME}/.flipper-sdk`;
+    const folderPath = join(homedir(), SDKS_FOLDER_NAME);
 
     if (!(await folderExists(folderPath))) {
       return [];
@@ -384,8 +380,8 @@ export default class FirmwareSDKManager {
     appId: string
   ): Promise<void> {
     const folderPath = joinPosix(
-      process.env.HOME ?? "~",
-      ".flipper-sdk",
+      homedir(),
+      SDKS_FOLDER_NAME,
       sdk,
       "applications_user",
       name
@@ -393,7 +389,6 @@ export default class FirmwareSDKManager {
 
     await mkdir(folderPath, { recursive: true });
 
-    // copy app.c to folderPath/app_id.c and replace <app_id> with appId and <app_name> with name also replace these in templates/application.fam -> folderPath/application.fam
     const tempaltesRoot = getTemplatesRoot();
 
     // save memory by save after read
@@ -432,18 +427,20 @@ export default class FirmwareSDKManager {
             "${workspaceFolder}/../../targets/furi_hal_include/**",
             "${workspaceFolder}/../../toolchain/current/arm-none-eabi/**",
           ],
-          intelliSenseMode: "gcc-arm",
-          compileCommands:
-            "${workspaceFolder}/../../build/latest/compile_commands.json",
-          compilerPath: `\${userHome}/.flipper-sdk/${sdk}/toolchain/current/bin/arm-none-eabi-gcc`,
+          intelliSenseMode: "linux-gcc-arm",
+          /*compileCommands:
+            // eslint-disable-next-line max-len
+            "${workspaceFolder}/../../build/f7-firmware-D/compile_commands.json",*/
+          // eslint-disable-next-line max-len
+          compilerPath: `\${userHome}/${SDKS_FOLDER_NAME}/${sdk}/toolchain/current/bin/arm-none-eabi-gcc`,
         },
       ],
       version: 4,
     };
 
     await writeFile(
-      `${folderPath}/.vscode/c_cpp_properties.json`,
-      JSON.stringify(cCppProperties),
+      join(folderPath, ".vscode", "c_cpp_properties.json"),
+      JSON.stringify(cCppProperties, null, 4),
       "utf8"
     );
 
@@ -467,8 +464,20 @@ export default class FirmwareSDKManager {
     };
 
     await writeFile(
-      `${folderPath}/.vscode/extensions.json`,
-      JSON.stringify(extensions),
+      join(folderPath, ".vscode", "extensions.json"),
+      JSON.stringify(extensions, null, 4),
+      "utf8"
+    );
+
+    // copy tasks.json and launch.json from templates to folderpath/.vscode
+    await writeFile(
+      join(folderPath, ".vscode", "tasks.json"),
+      readFileSync(`${tempaltesRoot}/tasks.json`, "utf8"),
+      "utf8"
+    );
+    await writeFile(
+      join(folderPath, ".vscode", "launch.json"),
+      readFileSync(`${tempaltesRoot}/launch.json`, "utf8"),
       "utf8"
     );
 

@@ -7,7 +7,7 @@ int32_t <app_id>_main(void* p) {
     // Mark argument as unused
     UNUSED(p);
 
-    FURI_LOG_E(TAG, "Hello, World!");
+    FURI_LOG_E(TAG, "%s", "Hello, World!");
 
     return 0;
 }

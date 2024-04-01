@@ -42,6 +42,48 @@
         "command": "flipper-app-dev.installSDK",
         "title": "Install SDK",
         "category": "Flipper App Development"
+      },
+      {
+        "command": "flipper-app-dev.deleteSDK",
+        "title": "Delete SDK",
+        "category": "Flipper App Development",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "flipper-app-dev.buildFap",
+        "title": "Build Flipper Application Package",
+        "category": "Flipper App Development",
+        "icon": "$(package)"
+      },
+      {
+        "command": "flipper-app-dev.launchFap",
+        "title": "Launch Flipper Application Package",
+        "category": "Flipper App Development",
+        "icon": "$(run)"
+      },
+      {
+        "command": "flipper-app-dev.openSerial",
+        "title": "Open Flipper Serial Console",
+        "category": "Flipper App Development",
+        "icon": "$(console)"
+      },
+      {
+        "command": "flipper-app-dev.fbtExecutable",
+        "title": "Get FBT Executable path",
+        "category": "Flipper App Development",
+        "enablement": "!isQuickOpen"
+      },
+      {
+        "command": "flipper-app-dev.scriptsFolder",
+        "title": "Get Scripts Folder path of selected SDK",
+        "category": "Flipper App Development",
+        "enablement": "!isQuickOpen"
+      },
+      {
+        "command": "flipper-app-dev.buildFolder",
+        "title": "Get Build Folder path of selected SDK",
+        "category": "Flipper App Development",
+        "enablement": "!isQuickOpen"
       }
     ],
     "languages": [
@@ -104,9 +146,19 @@
           "when": "view == flipper-app-dev-sdk-management",
           "group": "navigation"
         }
+      ],
+      "view/item/context": [
+        {
+          "command": "flipper-app-dev.deleteSDK",
+          "when": "view == flipper-app-dev-sdk-management && viewItem == sdkItem",
+          "group": "inline"
+        }
       ]
     }
   },
+  "activationEvents": [
+    "workspaceContains:application.fam"
+  ],
   "scripts": {
     "postinstall": "yarn dlx @yarnpkg/sdks vscode",
     "vscode:prepublish": "yarn run package",

@@ -5,8 +5,8 @@ import FirmwareSDKManager from "../firmware/sdkManager.mjs";
 
 export class SDKItem extends TreeItem {
   constructor(
-    private readonly ghRelease?: GHRelease,
-    private readonly sha1?: string
+    public readonly ghRelease?: GHRelease,
+    public readonly sha1?: string
   ) {
     super(
       ghRelease
@@ -32,6 +32,8 @@ export default class SDKManagementTreeDataProvider
     | undefined;
 
   public getTreeItem(element: SDKItem): TreeItem {
+    element.contextValue = "sdkItem";
+
     return element;
   }
 

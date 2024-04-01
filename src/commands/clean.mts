@@ -15,7 +15,7 @@ export default class CleanCommand extends Command {
       return;
     }
     installedSDKs.forEach(sdk => {
-      void FirmwareSDKManager.deleteDevSDK(sdk);
+      void FirmwareSDKManager.deleteSDK(sdk);
     });
   }
 }

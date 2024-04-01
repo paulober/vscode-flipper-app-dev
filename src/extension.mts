@@ -12,6 +12,14 @@ import InstallSDKCommand from "./commands/installSDK.mjs";
 import SwitchSDKCommand from "./commands/switchSDK.mjs";
 import CompileAppCommand from "./commands/compileApp.mjs";
 import SDKManagementTreeDataProvider from "./activitybar/sdkManagement.mjs";
+import DeleteSDKCommand from "./commands/deleteSDK.mjs";
+import FbtExecutableCommand from "./commands/fbtExecutable.mjs";
+import ScriptsFolderCommand from "./commands/scriptsFolder.mjs";
+import BuildFapCommand from "./commands/buildFap.mjs";
+import { setupStatusbar } from "./helper/uiHelper.mjs";
+import BuildFolderCommand from "./commands/buildFolder.mjs";
+import LaunchFapCommand from "./commands/launchFap.mjs";
+import OpenSerialCommand from "./commands/openSerial.mjs";
 
 export async function activate(context: ExtensionContext): Promise<void> {
   const COMMANDS: Array<Command | CommandWithResult<string> | CommandWithArgs> =
@@ -20,7 +28,14 @@ export async function activate(context: ExtensionContext): Promise<void> {
       new CleanCommand(),
       new CompileAppCommand(),
       new InstallSDKCommand(),
+      new DeleteSDKCommand(),
       new SwitchSDKCommand(),
+      new FbtExecutableCommand(),
+      new ScriptsFolderCommand(),
+      new BuildFolderCommand(),
+      new BuildFapCommand(),
+      new LaunchFapCommand(),
+      new OpenSerialCommand(),
     ];
 
   COMMANDS.forEach(command => {
@@ -39,6 +54,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
   );
 
   await FirmwareSDKManager.createDevWorkspace();
+
+  await setupStatusbar(context);
 }
 
 export function deactivate(): void {}
