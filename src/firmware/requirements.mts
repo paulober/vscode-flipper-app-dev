@@ -2,19 +2,20 @@ import { window } from "vscode";
 import which from "which";
 
 export interface Requirements {
-  git: boolean;
   python: boolean;
+  pip: boolean;
 }
 
 export async function checkRequirements(): Promise<Requirements> {
   const req = {} as Requirements;
-  const response = await which("git", { nothrow: true });
-  req.git = response !== null;
-  const response2 = await which(
+  const response = await which(
     process.platform === "win32" ? "py" : "python3",
     { nothrow: true }
   );
-  req.python = response2 !== null;
+  req.python = response !== null;
+
+  const response2 = await which("pip3", { nothrow: true });
+  req.pip = response !== null || process.platform === "win32";
 
   return req;
 }
@@ -24,17 +25,17 @@ export async function showRequirementsNotMetErrors(
 ): Promise<boolean> {
   let result = false;
 
-  if (!req.git) {
-    result = true;
-    await window.showErrorMessage(
-      "Git is not installed. Please install it and try again."
-    );
-  }
-
   if (!req.python) {
     result = true;
     await window.showErrorMessage(
-      "Python3 is not installed. Please install it and try again."
+      "Python3 is not installed. Please install install and restart VSCode."
+    );
+  }
+
+  if (!req.pip) {
+    result = true;
+    await window.showErrorMessage(
+      "Pip3 is not installed. Please install install and restart VSCode."
     );
   }
 

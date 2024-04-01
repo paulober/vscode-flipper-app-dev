@@ -7,13 +7,13 @@
   "publisher": "paulober",
   "license": "MPL-2.0",
   "icon": "images/icon.png",
-  "homepage": "https://github.com/paulober/vscode-flipper-zero/blob/main/README.md",
+  "homepage": "https://github.com/paulober/vscode-flipper-app-dev/blob/main/README.md",
   "bugs": {
-    "url": "https://github.com/paulober/vscode-flipper-zero/issues"
+    "url": "https://github.com/paulober/vscode-flipper-app-dev/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/paulober/vscode-flipper-zero"
+    "url": "https://github.com/paulober/vscode-flipper-app-dev.git"
   },
   "engines": {
     "vscode": "^1.87.0",

@@ -12,6 +12,6 @@ A vscode extension for the development of flipper zero apps.
 
 ## Requirements
 
-- Python 3.9+ installed and in PATH
-- pip installed and in PATH
+- Python 3.9+ installed and in PATH (Windows `py` executable in PATH, Linux & macOS `python3` executable in PATH)
+- pip installed and in PATH (Windows `py -m pip`, Linux & macOS `pip3` executable in PATH)
 - Storage space for the SDK and the generated project
