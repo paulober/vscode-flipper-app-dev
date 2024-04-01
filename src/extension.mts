@@ -27,11 +27,17 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
   await installUfbt();
 
+  const rootPath =
+    workspace.workspaceFolders && workspace.workspaceFolders.length > 0
+      ? workspace.workspaceFolders[0].uri.fsPath
+      : undefined;
+  const flipperAppDevProvider = new FlipperAppDevProvider(rootPath);
+
   const COMMANDS: Array<Command | CommandWithResult<string> | CommandWithArgs> =
     [
       new NewAppCommand(),
       new CleanCommand(),
-      new SwitchSDKCommand(),
+      new SwitchSDKCommand(flipperAppDevProvider),
       new BuildFapCommand(),
       new LaunchFapCommand(),
       new OpenSerialCommand(),
@@ -42,12 +48,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
   });
 
   context.subscriptions.push(FamEditorProvider.register(context));
-
-  const rootPath =
-    workspace.workspaceFolders && workspace.workspaceFolders.length > 0
-      ? workspace.workspaceFolders[0].uri.fsPath
-      : undefined;
-  const flipperAppDevProvider = new FlipperAppDevProvider(rootPath);
 
   context.subscriptions.push(
     window.registerTreeDataProvider(

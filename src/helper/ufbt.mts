@@ -1,9 +1,9 @@
 import { exec } from "child_process";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { homedir } from "os";
 import { dirname, join } from "path";
 import { promisify } from "util";
-import { Terminal, Uri, window, workspace } from "vscode";
+import { Terminal, ThemeIcon, Uri, window, workspace } from "vscode";
 import { getShellRoot } from "./fsHelper.mjs";
 
 const execAsync = promisify(exec);
@@ -84,8 +84,9 @@ export async function ufbtLaunch(): Promise<void> {
       `shell.${process.platform === "win32" ? "cmd" : "sh"}`
     ),
     shellArgs: ["ufbt", "launch"],
-    name: "Build/Launch Flipper Application Package",
+    name: "Launch Flipper Application Package",
     isTransient: true,
+    iconPath: new ThemeIcon("rocket"),
   });
 
   // Show the terminal
@@ -98,11 +99,12 @@ export async function ufbtCli(): Promise<void> {
   }
 
   ufbtConsoleTerminal = window.createTerminal({
-    cwd: homedir(),
+    cwd: workspace.workspaceFolders?.[0].uri.fsPath ?? homedir(),
     shellPath: "ufbt",
     shellArgs: ["cli"],
     name: "Flipper Serial Console",
     isTransient: true,
+    iconPath: new ThemeIcon("game"),
   });
 
   // Show the terminal
@@ -129,6 +131,7 @@ export async function ufbtBuild(): Promise<void> {
     shellArgs: ["ufbt"],
     name: "Build Flipper Application Package",
     isTransient: true,
+    iconPath: new ThemeIcon("wrench"),
   });
 
   // Show the terminal
@@ -189,4 +192,32 @@ export async function ufbtClean(): Promise<void> {
   }
 
   void window.showInformationMessage("Cleaned successfully.");
+}
+
+export function ufbtGetSelectedChannel(): string | null {
+  const filePath = join(homedir(), ".ufbt", "current", "ufbt_state.json");
+
+  try {
+    // Check if file exists
+    if (existsSync(filePath)) {
+      // Read the file content
+      const fileContent = readFileSync(filePath, "utf8");
+      // Parse JSON content
+      const jsonData = JSON.parse(fileContent);
+      // Check if 'channel' property exists in the JSON data
+      if (jsonData && jsonData.channel) {
+        return jsonData.channel;
+      } else {
+        console.error(
+          "Channel property not found in the ufbt state JSON data."
+        );
+        return null;
+      }
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.error("Error reading ufbt state:", err);
+    return null;
+  }
 }

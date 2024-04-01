@@ -1,11 +1,12 @@
 import { window } from "vscode";
 import { CommandWithArgs } from "./command.mjs";
 import { UfbtSDKBranch, ufbtSwitchSDK } from "../helper/ufbt.mjs";
+import { FlipperAppDevProvider } from "../activitybar/flipperAppDevProvider.mjs";
 
 export default class SwitchSDKCommand extends CommandWithArgs {
   public static readonly id = "switchSDK";
 
-  constructor() {
+  constructor(private readonly _flipperAppDevProvider: FlipperAppDevProvider) {
     super(SwitchSDKCommand.id);
   }
 
@@ -26,6 +27,9 @@ export default class SwitchSDKCommand extends CommandWithArgs {
       }
 
       await ufbtSwitchSDK(branch);
+      // wait 2 seconds
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      this._flipperAppDevProvider.refresh();
 
       return;
     }
@@ -55,5 +59,9 @@ export default class SwitchSDKCommand extends CommandWithArgs {
         await ufbtSwitchSDK(UfbtSDKBranch.dev);
         break;
     }
+
+    // wait 2 seconds
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    this._flipperAppDevProvider.refresh();
   }
 }

@@ -1,11 +1,12 @@
 {
   "name": "flipper-app-dev",
-  "displayName": "Flipper app development",
+  "displayName": "Flipper Application Development",
   "description": "A vscode extension for the development of Flipper Zero® apps.",
   "version": "0.1.0",
   "author": "paulober",
   "publisher": "paulober",
   "license": "MPL-2.0",
+  "icon": "images/icon.png",
   "homepage": "https://github.com/paulober/vscode-flipper-zero/blob/main/README.md",
   "bugs": {
     "url": "https://github.com/paulober/vscode-flipper-zero/issues"
@@ -87,20 +88,11 @@
         ]
       }
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "flipper-app-dev-activity-bar",
-          "title": "Flipper Application Development",
-          "icon": "images/logo-black.png"
-        }
-      ]
-    },
     "views": {
-      "flipper-app-dev-activity-bar": [
+      "explorer": [
         {
           "id": "flipper-app-dev-quick-access",
-          "name": "SDK Branch",
+          "name": "Flipper App Development",
           "type": "tree"
         }
       ]
