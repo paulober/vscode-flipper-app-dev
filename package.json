@@ -30,24 +30,13 @@
       },
       {
         "command": "flipper-app-dev.clean",
-        "title": "Delete all installed SDKs (also removes all flipper app projects)",
+        "title": "Clean sdk management",
         "category": "Flipper App Development"
       },
       {
         "command": "flipper-app-dev.famEdit.new",
         "title": "New Flipper Application Manifest",
         "category": "Flipper App Development"
-      },
-      {
-        "command": "flipper-app-dev.installSDK",
-        "title": "Install SDK",
-        "category": "Flipper App Development"
-      },
-      {
-        "command": "flipper-app-dev.deleteSDK",
-        "title": "Delete SDK",
-        "category": "Flipper App Development",
-        "icon": "$(trash)"
       },
       {
         "command": "flipper-app-dev.buildFap",
@@ -66,24 +55,6 @@
         "title": "Open Flipper Serial Console",
         "category": "Flipper App Development",
         "icon": "$(console)"
-      },
-      {
-        "command": "flipper-app-dev.fbtExecutable",
-        "title": "Get FBT Executable path",
-        "category": "Flipper App Development",
-        "enablement": "!isQuickOpen"
-      },
-      {
-        "command": "flipper-app-dev.scriptsFolder",
-        "title": "Get Scripts Folder path of selected SDK",
-        "category": "Flipper App Development",
-        "enablement": "!isQuickOpen"
-      },
-      {
-        "command": "flipper-app-dev.buildFolder",
-        "title": "Get Build Folder path of selected SDK",
-        "category": "Flipper App Development",
-        "enablement": "!isQuickOpen"
       }
     ],
     "languages": [
@@ -111,7 +82,7 @@
         "displayName": "Flipper Application Manifest",
         "selector": [
           {
-            "filenamePattern": "application.fam"
+            "filenamePattern": "application*.fam"
           }
         ]
       }
@@ -129,32 +100,17 @@
       "flipper-app-dev-activity-bar": [
         {
           "id": "flipper-app-dev-quick-access",
-          "name": "Quick Access",
-          "type": "tree"
-        },
-        {
-          "id": "flipper-app-dev-sdk-management",
-          "name": "SDK Management",
+          "name": "SDK Branch",
           "type": "tree"
         }
       ]
     },
-    "menus": {
-      "view/title": [
-        {
-          "command": "flipper-app-dev.installSDK",
-          "when": "view == flipper-app-dev-sdk-management",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "flipper-app-dev.deleteSDK",
-          "when": "view == flipper-app-dev-sdk-management && viewItem == sdkItem",
-          "group": "inline"
-        }
-      ]
-    }
+    "viewsWelcome": [
+      {
+        "view": "flipper-app-dev-quick-access",
+        "contents": "No Flipper App found in this workspace.\n[Create new Flipper App](command:flipper-app-dev.newApp)"
+      }
+    ]
   },
   "activationEvents": [
     "workspaceContains:application.fam"

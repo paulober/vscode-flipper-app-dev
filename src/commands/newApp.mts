@@ -1,18 +1,8 @@
 import { Command } from "./command.mjs";
-import {
-  checkRequirements,
-  showRequirementsNotMetErrors,
-} from "../firmware/requirements.mjs";
-import FirmwareSDKManager from "../firmware/sdkManager.mjs";
-import { getLatestCommitHash } from "../helper/githubAPI.mjs";
-import {
-  EXTENSION_NAME,
-  OFW_GITHUB_BRANCH,
-  OFW_GITHUB_OWNER,
-  OFW_GITHUB_REPO,
-} from "../constants.mjs";
-import { commands, window } from "vscode";
-import InstallSDKCommand from "./installSDK.mjs";
+import { installUfbt, ufbtNewApp } from "../helper/ufbt.mjs";
+import { window } from "vscode";
+import { mkdir } from "fs/promises";
+import { join } from "path";
 
 export default class NewAppCommand extends Command {
   public static readonly id = "newApp";
@@ -22,27 +12,7 @@ export default class NewAppCommand extends Command {
   }
 
   async execute(): Promise<void> {
-    console.log("Creating a new app...");
-    const result = await checkRequirements();
-    if (await showRequirementsNotMetErrors(result)) {
-      return;
-    }
-
-    const selectedSDK: string = await commands.executeCommand(
-      EXTENSION_NAME + "." + InstallSDKCommand.id
-    );
-    if (selectedSDK === "") {
-      return;
-    }
-
-    const appName = await window.showInputBox({
-      prompt: "Please enter the name of your new app",
-      placeHolder: "App Name",
-    });
-
-    if (appName === undefined) {
-      return;
-    }
+    await installUfbt();
 
     // no whitespaces, only letters, numbers, and underscores
     const appId = await window.showInputBox({
@@ -61,6 +31,23 @@ export default class NewAppCommand extends Command {
       return;
     }
 
-    await FirmwareSDKManager.createNewApp(selectedSDK, appName, appId);
+    const folders = await window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      openLabel: "Select Folder",
+      title: "Select Folder root where the app should be created",
+    });
+
+    if (folders === undefined || folders.length !== 1) {
+      return;
+    }
+
+    // create app_id in folders
+    await mkdir(join(folders[0].fsPath, appId));
+    await ufbtNewApp(
+      appId,
+      folders[0].with({ path: join(folders[0].path, appId) })
+    );
   }
 }

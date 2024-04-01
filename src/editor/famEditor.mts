@@ -570,13 +570,13 @@ export class FamEditorProvider implements CustomEditorProvider<FamDocument> {
 
       const uri = Uri.joinPath(
         workspaceFolders[0].uri,
-        `new-${FamEditorProvider.newFamFieldId++}.fam`
+        `application-${FamEditorProvider.newFamFieldId++}.fam`
       ).with({ scheme: "untitled" });
 
       void commands.executeCommand(
         "vscode.openWith",
         uri,
-        FamEditorProvider.newFamFieldId
+        FamEditorProvider.viewType
       );
     });
 
