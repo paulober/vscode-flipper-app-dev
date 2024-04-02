@@ -52,7 +52,9 @@ export async function ufbtNewApp(appId: string, folder: Uri): Promise<void> {
   // add paulober.flipper-app-dev to the recommended extensions in folder/.vscode/extensions.json
   const extensionsPath = join(folder.fsPath, ".vscode", "extensions.json");
   const extensions = existsSync(extensionsPath)
-    ? (JSON.parse(readFileSync(extensionsPath, "utf8")) as {
+    ? (JSON.parse(
+        readFileSync(extensionsPath, "utf8").replaceAll(/^\s*\/\/.*$/gm, "")
+      ) as {
         recommendations: string[];
       })
     : { recommendations: [] };
