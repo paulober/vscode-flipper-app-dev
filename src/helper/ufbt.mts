@@ -1,15 +1,17 @@
 import { exec } from "child_process";
 import { existsSync, readFileSync } from "fs";
 import { homedir } from "os";
-import { dirname, join } from "path";
+import { join } from "path";
 import { promisify } from "util";
-import { Terminal, ThemeIcon, Uri, window, workspace } from "vscode";
+import { type Terminal, ThemeIcon, type Uri, window, workspace } from "vscode";
 import { getShellRoot } from "./fsHelper.mjs";
+import { EXTENSION_NAME } from "../constants.mjs";
+import { writeFile } from "fs/promises";
 
 const execAsync = promisify(exec);
 
 export async function installUfbt(): Promise<boolean> {
-  const { stdout, stderr } = await execAsync(
+  const { stderr } = await execAsync(
     process.platform === "win32"
       ? "py -m pip install -U ufbt"
       : "python3 -m pip install -U ufbt"
@@ -19,7 +21,8 @@ export async function installUfbt(): Promise<boolean> {
     console.error(stderr);
 
     void window.showErrorMessage(
-      "An error occurred while installing ufbt. Please check the output for more information: " +
+      "An error occurred while installing ufbt. " +
+        "Please check the output for more information: " +
         stderr
     );
 
@@ -38,12 +41,26 @@ export async function ufbtNewApp(appId: string, folder: Uri): Promise<void> {
     console.error(stderr);
 
     void window.showErrorMessage(
-      "An error occurred while creating a new app. Please check the output for more information: " +
+      "An error occurred while creating a new app. " +
+        "Please check the output for more information: " +
         stderr
     );
 
     return;
   }
+
+  // add paulober.flipper-app-dev to the recommended extensions in folder/.vscode/extensions.json
+  const extensionsPath = join(folder.fsPath, ".vscode", "extensions.json");
+  const extensions = existsSync(extensionsPath)
+    ? (JSON.parse(readFileSync(extensionsPath, "utf8")) as {
+        recommendations: string[];
+      })
+    : { recommendations: [] };
+  extensions.recommendations = [
+    ...(extensions.recommendations ?? []),
+    `paulober.${EXTENSION_NAME}`,
+  ];
+  await writeFile(extensionsPath, JSON.stringify(extensions, null, 4));
 
   void window.showInformationMessage("Created new app successfully.");
 
@@ -60,7 +77,7 @@ export async function ufbtNewApp(appId: string, folder: Uri): Promise<void> {
 let ufbtBuildTerminal: Terminal | undefined;
 let ufbtConsoleTerminal: Terminal | undefined;
 
-export async function ufbtLaunch(): Promise<void> {
+export function ufbtLaunch(): void {
   if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
     void window.showErrorMessage("No open flipper application folder found.");
 
@@ -93,7 +110,7 @@ export async function ufbtLaunch(): Promise<void> {
   ufbtBuildTerminal.show();
 }
 
-export async function ufbtCli(): Promise<void> {
+export function ufbtCli(): void {
   if (ufbtConsoleTerminal) {
     ufbtConsoleTerminal.dispose();
   }
@@ -111,7 +128,7 @@ export async function ufbtCli(): Promise<void> {
   ufbtConsoleTerminal.show();
 }
 
-export async function ufbtBuild(): Promise<void> {
+export function ufbtBuild(): void {
   if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
     void window.showErrorMessage("No open flipper application folder found.");
 
@@ -144,7 +161,7 @@ export enum UfbtSDKBranch {
   dev = "dev",
 }
 
-export async function ufbtSwitchSDK(branch: UfbtSDKBranch): Promise<void> {
+export function ufbtSwitchSDK(branch: UfbtSDKBranch): void {
   if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
     void window.showErrorMessage("No open flipper application folder found.");
 
@@ -177,7 +194,7 @@ export async function ufbtSwitchSDK(branch: UfbtSDKBranch): Promise<void> {
 }
 
 export async function ufbtClean(): Promise<void> {
-  const { stdout, stderr } = await execAsync("ufbt clean", {
+  const { stderr } = await execAsync("ufbt clean", {
     cwd: homedir(),
   });
 
@@ -203,7 +220,7 @@ export function ufbtGetSelectedChannel(): string | null {
       // Read the file content
       const fileContent = readFileSync(filePath, "utf8");
       // Parse JSON content
-      const jsonData = JSON.parse(fileContent);
+      const jsonData = JSON.parse(fileContent) as { channel: string } | null;
       // Check if 'channel' property exists in the JSON data
       if (jsonData && jsonData.channel) {
         return jsonData.channel;
@@ -211,6 +228,7 @@ export function ufbtGetSelectedChannel(): string | null {
         console.error(
           "Channel property not found in the ufbt state JSON data."
         );
+
         return null;
       }
     } else {
@@ -218,6 +236,7 @@ export function ufbtGetSelectedChannel(): string | null {
     }
   } catch (err) {
     console.error("Error reading ufbt state:", err);
+
     return null;
   }
 }

@@ -1,11 +1,11 @@
 import {
   EventEmitter,
-  ProviderResult,
+  type ProviderResult,
   ThemeIcon,
-  TreeDataProvider,
+  type TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
-  Event,
+  type Event,
 } from "vscode";
 import { UfbtSDKBranch, ufbtGetSelectedChannel } from "../helper/ufbt.mjs";
 import { EXTENSION_NAME } from "../constants.mjs";
@@ -48,6 +48,7 @@ export class FlipperAppDevProvider implements TreeDataProvider<SDKChannel> {
       title: "Switch SDK",
       arguments: [element.branch],
     };
+
     return element;
   }
 

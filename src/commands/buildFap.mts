@@ -8,7 +8,7 @@ export default class BuildFapCommand extends Command {
     super(BuildFapCommand.id);
   }
 
-  async execute(): Promise<void> {
-    await ufbtBuild();
+  execute(): void {
+    ufbtBuild();
   }
 }

@@ -8,7 +8,7 @@ export default class LaunchFapCommand extends Command {
     super(LaunchFapCommand.id);
   }
 
-  async execute(): Promise<void> {
-    await ufbtLaunch();
+  execute(): void {
+    ufbtLaunch();
   }
 }

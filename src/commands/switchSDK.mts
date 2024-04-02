@@ -1,7 +1,8 @@
 import { window } from "vscode";
 import { CommandWithArgs } from "./command.mjs";
 import { UfbtSDKBranch, ufbtSwitchSDK } from "../helper/ufbt.mjs";
-import { FlipperAppDevProvider } from "../activitybar/flipperAppDevProvider.mjs";
+// eslint-disable-next-line max-len
+import type { FlipperAppDevProvider } from "../activitybar/flipperAppDevProvider.mjs";
 
 export default class SwitchSDKCommand extends CommandWithArgs {
   public static readonly id = "switchSDK";
@@ -15,7 +16,9 @@ export default class SwitchSDKCommand extends CommandWithArgs {
       const result = await window.showQuickPick(
         ["$(check) Yes", "$(chrome-close) No"],
         {
-          placeHolder: `Do you realy want to switch your selected SDK to the ${branch} branch?`,
+          placeHolder:
+            "Do you realy want to switch your selected " +
+            `SDK to the ${branch} branch?`,
           canPickMany: false,
           ignoreFocusOut: false,
           title: "Switch SDK",
@@ -26,7 +29,7 @@ export default class SwitchSDKCommand extends CommandWithArgs {
         return;
       }
 
-      await ufbtSwitchSDK(branch);
+      ufbtSwitchSDK(branch);
       // wait 2 seconds
       await new Promise(resolve => setTimeout(resolve, 2000));
       this._flipperAppDevProvider.refresh();
@@ -50,13 +53,13 @@ export default class SwitchSDKCommand extends CommandWithArgs {
 
     switch (sdkBranch) {
       case "Release":
-        await ufbtSwitchSDK(UfbtSDKBranch.release);
+        ufbtSwitchSDK(UfbtSDKBranch.release);
         break;
       case "Release-candidate":
-        await ufbtSwitchSDK(UfbtSDKBranch.rc);
+        ufbtSwitchSDK(UfbtSDKBranch.rc);
         break;
       case "Dev":
-        await ufbtSwitchSDK(UfbtSDKBranch.dev);
+        ufbtSwitchSDK(UfbtSDKBranch.dev);
         break;
     }
 
